@@ -1027,6 +1027,22 @@
         </table>
       </div>
       <p style="font-size:0.75rem;color:#aaa;margin-top:12px">Los tickers reconocidos se completan automáticamente al cargar desde planilla.</p>
+      
+      <div style="margin-top:24px;background:white;border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+        <div class="queue-title" style="margin-bottom:8px">Carga masiva</div>
+        <p style="font-size:0.76rem;color:#aaa;margin-bottom:12px">
+          Pegá varias líneas a la vez. Cada línea: <code style="background:#f5f5f5;padding:2px 6px;border-radius:4px">TICKER — Nombre completo — Emisor</code><br>
+          Separadores aceptados: guión, tab, o dos o más espacios. El emisor es opcional.
+        </p>
+        <div class="rc-field" style="margin-bottom:12px">
+          <label>Texto a importar</label>
+          <textarea id="inst-paste-input" style="min-height:120px;font-family:monospace;font-size:0.8rem" placeholder="PBJ26 — Bono PBA 2026 — Provincia de Buenos Aires&#10;RB61O&#9;Bono Río Negro Serie 1&#10;XLY     Consumer Discretionary ETF     State Street"></textarea>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn-confirm" onclick="pasteInstrumentos()">⚡ Importar</button>
+          <button class="btn-discard" onclick="document.getElementById('inst-paste-input').value=''">Limpiar</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2038,6 +2054,38 @@ function renderInstrumentos() {
       <td><button class="btn-del" onclick="deleteInstrumento('${escHtml(k)}')" title="Eliminar">✕</button></td>
     </tr>
   `).join('');
+}
+
+
+function pasteInstrumentos() {
+  const raw = document.getElementById('inst-paste-input').value.trim();
+  if (!raw) { showToast('Pegá contenido primero', 'err'); return; }
+
+  const inst = getInstrumentos();
+  let added = 0, updated = 0;
+
+  const lines = raw.split(/\n/).map(l => l.trim()).filter(Boolean);
+
+  for (const line of lines) {
+    // Split by: tab, " - ", " — ", " – ", or 2+ spaces
+    const parts = line.split(/\t| ?[\-—–] ?|  +/).map(p => p.trim()).filter(Boolean);
+    if (!parts.length) continue;
+
+    const ticker = parts[0].toUpperCase();
+    if (!ticker) continue;
+
+    const nombre = parts[1] || '';
+    const emisor = parts[2] || '';
+
+    const exists = !!inst[ticker];
+    inst[ticker] = { nombre, emisor };
+    exists ? updated++ : added++;
+  }
+
+  saveInstrumentos(inst);
+  document.getElementById('inst-paste-input').value = '';
+  renderInstrumentos();
+  showToast(`✓ ${added} agregados, ${updated} actualizados`);
 }
 
 function lookupInstrumento(ticker) {
