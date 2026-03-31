@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bitácora IA · Cocos Capital</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Bitácora · cocos capital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #1a1a2e;
@@ -32,24 +32,25 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Outfit', sans-serif;
-    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    background: #f0f4fa;
     color: var(--ink);
     min-height: 100vh;
   }
 
   /* ── HEADER ── */
   header {
-    background: var(--ink);
+    background: #ffffff;
     padding: 0 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 68px;
+    height: 64px;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 12px rgba(10,22,40,0.06);
   }
   .logo {
     display: flex;
@@ -57,19 +58,19 @@
     gap: 14px;
   }
   .logo-icon {
-    width: 36px; height: 36px;
+    width: 32px; height: 32px;
     background: var(--terra);
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   .logo-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--cream);
-    letter-spacing: 0.01em;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--ink);
+    letter-spacing: -0.01em;
   }
-  .logo-text span { color: var(--rose); font-style: italic; }
+  .logo-text span { color: var(--terra); }
   .header-right {
     display: flex;
     align-items: center;
@@ -77,48 +78,47 @@
   }
   .event-count {
     font-size: 0.75rem;
-    color: #888;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    color: #8a9ab5;
+    letter-spacing: 0.04em;
   }
-  .event-count strong { color: var(--gold-light); }
+  .event-count strong { color: var(--terra); font-weight: 700; }
 
   /* ── TABS ── */
   nav {
-    background: var(--parchment);
+    background: #ffffff;
     border-bottom: 1px solid var(--border);
     padding: 0 48px;
     display: flex;
-    gap: 4px;
+    gap: 0;
   }
   .tab {
-    padding: 14px 22px;
+    padding: 16px 20px;
     font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
+    letter-spacing: 0.02em;
     cursor: pointer;
-    color: #999;
+    color: #8a9ab5;
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
-    transition: all 0.2s;
+    transition: all 0.18s;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
+    white-space: nowrap;
   }
-  .tab:hover { color: var(--terra); }
+  .tab:hover { color: var(--ink); }
   .tab.active { color: var(--terra); border-bottom-color: var(--terra); }
   .tab-badge {
     background: var(--terra);
     color: white;
-    font-size: 0.65rem;
-    padding: 1px 7px;
+    font-size: 0.62rem;
+    padding: 2px 7px;
     border-radius: 10px;
     font-weight: 700;
   }
 
   /* ── MAIN ── */
-  main { max-width: 1200px; margin: 0 auto; padding: 40px 48px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 36px 48px; }
   .panel { display: none; }
   .panel.active { display: block; animation: fadeIn 0.25s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -126,16 +126,18 @@
   /* ── PAGE HEADER ── */
   .page-header { margin-bottom: 32px; }
   .page-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
     color: var(--ink);
     margin-bottom: 6px;
+    letter-spacing: -0.02em;
   }
-  .page-sub { font-size: 0.83rem; color: #888; }
+  .page-sub { font-size: 0.83rem; color: #8a9ab5; }
 
   /* ── UPLOAD ZONE ── */
   .upload-zone {
-    border: 2px dashed var(--rose);
+    border: 2px dashed var(--border);
     border-radius: var(--radius);
     background: var(--white);
     padding: 56px 40px;
@@ -146,7 +148,7 @@
   }
   .upload-zone:hover, .upload-zone.dragover {
     border-color: var(--terra);
-    background: #fdf5f2;
+    background: #eef4fd;
     transform: scale(1.005);
   }
   .upload-zone input[type="file"] {
@@ -154,7 +156,7 @@
   }
   .upload-icon { font-size: 2.8rem; margin-bottom: 16px; }
   .upload-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
     font-size: 1.3rem;
     color: var(--ink);
     margin-bottom: 8px;
@@ -181,11 +183,11 @@
   /* ── PROCESSING QUEUE ── */
   .queue-section { margin-top: 32px; }
   .queue-title {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--terra);
+    color: #6b84a8;
     margin-bottom: 16px;
   }
   .queue-list { display: flex; flex-direction: column; gap: 12px; }
@@ -201,8 +203,8 @@
     box-shadow: var(--shadow-sm);
     transition: all 0.3s;
   }
-  .queue-item.processing { border-color: var(--gold); background: #fffdf5; }
-  .queue-item.done { border-color: var(--sage); background: #f5fbf6; }
+  .queue-item.processing { border-color: var(--terra); background: #eef4fd; }
+  .queue-item.done { border-color: var(--sage); background: #edfaf7; }
   .queue-item.error { border-color: var(--terra); background: #fdf5f3; }
 
   .qi-icon { font-size: 1.5rem; flex-shrink: 0; }
@@ -238,8 +240,8 @@
   @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
   .rc-header {
-    background: var(--parchment);
-    padding: 14px 20px;
+    background: var(--cream);
+    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -266,9 +268,9 @@
     display: block;
     font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: var(--terra);
+    color: #6b84a8;
     margin-bottom: 5px;
   }
   .rc-field input,
@@ -279,9 +281,9 @@
     border: 1.5px solid var(--border);
     border-radius: 8px;
     background: var(--cream);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.83rem;
-    color: var(--ink);
+    color: var(--ink2);
     outline: none;
     transition: border-color 0.2s;
   }
@@ -296,31 +298,31 @@
   .rc-actions {
     display: flex;
     gap: 10px;
-    padding: 14px 20px;
-    background: var(--parchment);
+    padding: 12px 20px;
+    background: var(--cream);
     border-top: 1px solid var(--border);
     justify-content: flex-end;
   }
   .btn-confirm {
     padding: 9px 22px;
-    background: var(--sage);
+    background: var(--terra);
     color: white;
     border: none;
     border-radius: 8px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
   }
-  .btn-confirm:hover { background: #5e8a62; }
+  .btn-confirm:hover { background: var(--terra-light); }
   .btn-discard {
     padding: 9px 18px;
     background: transparent;
     color: #999;
     border: 1px solid var(--border);
     border-radius: 8px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.2s;
@@ -354,18 +356,21 @@
     border-radius: var(--radius);
     padding: 18px 20px;
     box-shadow: var(--shadow-sm);
-    border-top: 3px solid var(--border);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
   }
-  .stat-card.s1 { border-top-color: var(--rose); }
-  .stat-card.s2 { border-top-color: var(--sage); }
-  .stat-card.s3 { border-top-color: var(--gold); }
-  .stat-card.s4 { border-top-color: var(--sky); }
-  .stat-card.s5 { border-top-color: var(--lavender); }
+  .stat-card.s1 { border-left-color: var(--terra); }
+  .stat-card.s2 { border-left-color: var(--sage); }
+  .stat-card.s3 { border-left-color: var(--gold); }
+  .stat-card.s4 { border-left-color: var(--sky); }
+  .stat-card.s5 { border-left-color: var(--lavender); }
   .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.9rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
     color: var(--ink);
     line-height: 1;
+    letter-spacing: -0.02em;
   }
   .stat-label {
     font-size: 0.68rem;
@@ -381,7 +386,7 @@
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 16px 20px;
+    padding: 14px 18px;
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
@@ -394,9 +399,9 @@
     display: block;
     font-size: 0.67rem;
     font-weight: 700;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: var(--terra);
+    color: #6b84a8;
     margin-bottom: 5px;
   }
   .filters-bar input,
@@ -405,7 +410,7 @@
     padding: 8px 11px;
     border: 1.5px solid var(--border);
     border-radius: 8px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.82rem;
     color: var(--ink);
     background: var(--cream);
@@ -419,7 +424,7 @@
     background: transparent;
     border: 1.5px solid var(--border);
     border-radius: 8px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.78rem;
     color: #999;
     cursor: pointer;
@@ -430,19 +435,19 @@
   .btn-clear:hover { color: var(--terra); border-color: var(--terra); }
   .btn-export {
     padding: 8px 18px;
-    background: var(--ink);
+    background: var(--terra);
     border: none;
     border-radius: 8px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.78rem;
     font-weight: 600;
-    color: var(--cream);
+    color: white;
     cursor: pointer;
     white-space: nowrap;
     transition: background 0.2s;
     align-self: flex-end;
   }
-  .btn-export:hover { background: var(--terra); }
+  .btn-export:hover { background: var(--terra-light); }
 
   /* ── TABLE ── */
   .table-wrap {
@@ -453,14 +458,14 @@
     border: 1px solid var(--border);
   }
   .table-info {
-    padding: 12px 20px;
-    font-size: 0.75rem;
-    color: #aaa;
+    padding: 10px 20px;
+    font-size: 0.74rem;
+    color: #8a9ab5;
     border-bottom: 1px solid var(--border);
-    background: var(--parchment);
+    background: var(--cream);
   }
   table { width: 100%; border-collapse: collapse; font-size: 0.81rem; }
-  thead { background: var(--ink); }
+  thead { background: var(--ink2); }
   thead th {
     padding: 12px 16px;
     text-align: left;
@@ -554,12 +559,12 @@
     margin-bottom: 24px;
   }
   .cal-nav-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
     font-size: 1.4rem; color: var(--ink);
   }
   .btn-cal-nav {
     padding: 8px 18px; background: var(--white); border: 1.5px solid var(--border);
-    border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.82rem;
+    border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
     font-weight: 600; cursor: pointer; color: var(--ink2); transition: all 0.2s;
   }
   .btn-cal-nav:hover { border-color: var(--terra); color: var(--terra); }
@@ -570,7 +575,7 @@
     box-shadow: var(--shadow-sm);
   }
   .cal-header-day {
-    background: var(--ink); color: #aaa;
+    background: var(--ink2); color: #7a9ab8;
     text-align: center; padding: 10px 4px;
     font-size: 0.68rem; font-weight: 700;
     letter-spacing: 0.1em; text-transform: uppercase;
@@ -581,8 +586,8 @@
     transition: background 0.15s;
   }
   .cal-cell.other-month { background: var(--parchment); }
-  .cal-cell.today { background: #fdf5f2; }
-  .cal-cell.today .cal-day-num { color: var(--terra); font-weight: 700; }
+  .cal-cell.today { background: #eef4fd; }
+  .cal-cell.today .cal-day-num { color: var(--terra); font-weight: 800; }
   .cal-day-num {
     font-size: 0.78rem; font-weight: 600; color: #bbb;
     margin-bottom: 6px;
@@ -602,7 +607,7 @@
   }
   .cal-legend-item {
     display: flex; align-items: center; gap: 6px;
-    font-size: 0.72rem; color: #888;
+    font-size: 0.72rem; color: #8a9ab5;
   }
   .cal-legend-dot {
     width: 10px; height: 10px; border-radius: 3px;
@@ -616,7 +621,7 @@
   .resumen-controls .field { flex: 1; min-width: 140px; }
   .resumen-body {
     background: var(--white); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 40px 48px;
+    border-radius: var(--radius); padding: 36px 44px;
     box-shadow: var(--shadow-sm); max-width: 860px;
   }
   .res-header {
@@ -624,9 +629,9 @@
     display: flex; justify-content: space-between; align-items: flex-end;
   }
   .res-title {
-    font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--ink);
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.6rem; color: var(--ink);
   }
-  .res-subtitle { font-size: 0.78rem; color: var(--terra); margin-top: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .res-subtitle { font-size: 0.72rem; color: var(--terra); margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
   .res-meta { font-size: 0.75rem; color: #aaa; text-align: right; }
   .res-stats {
     display: grid; grid-template-columns: repeat(4, 1fr);
@@ -636,11 +641,11 @@
     border-left: 3px solid var(--rose); padding: 10px 14px;
     background: var(--parchment); border-radius: 8px;
   }
-  .res-stat-n { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--ink); }
+  .res-stat-n { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--ink); }
   .res-stat-l { font-size: 0.68rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; }
   .res-group { margin-bottom: 28px; }
   .res-group-title {
-    font-family: 'Playfair Display', serif; font-size: 1rem;
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1rem;
     color: var(--terra); border-bottom: 1px solid var(--blush);
     padding-bottom: 8px; margin-bottom: 14px;
   }
@@ -656,13 +661,13 @@
   }
   .res-event-body { flex: 1; }
   .res-event-name { font-weight: 700; font-size: 0.9rem; color: var(--ink); margin-bottom: 3px; }
-  .res-event-detail { font-size: 0.78rem; color: #888; line-height: 1.5; }
-  .res-event-notas { font-size: 0.76rem; color: #aaa; font-style: italic; margin-top: 3px; }
+  .res-event-detail { font-size: 0.78rem; color: #8a9ab5; line-height: 1.5; }
+  .res-event-notas { font-size: 0.76rem; color: #aaa;  margin-top: 3px; }
   .res-event-badge { display:inline-block; padding:2px 8px; border-radius:8px; font-size:0.65rem; font-weight:700; margin-right:6px; }
   .res-empty { text-align:center; padding:40px; color:#ccc; font-size:0.88rem; }
   .btn-pdf-resumen {
     padding: 10px 22px; background: var(--terra); color: white;
-    border: none; border-radius: 8px; font-family: 'Outfit', sans-serif;
+    border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
     font-size: 0.82rem; font-weight: 600; cursor: pointer;
     transition: background 0.2s;
   }
@@ -671,16 +676,78 @@
 
   .tipo-pill {
     padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
-    background: var(--white); font-family: 'Outfit', sans-serif; font-size: 0.76rem;
+    background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.76rem;
     font-weight: 600; cursor: pointer; color: var(--dusty); transition: all 0.18s;
   }
   .tipo-pill:hover { border-color: var(--terra); color: var(--terra); }
-  .tipo-pill.active { background: var(--terra); border-color: var(--terra); color: white; }
+  .tipo-pill.active { background: var(--terra); border-color: var(--terra); color: white; font-weight: 700; }
+
+
+  /* ── VENCIMIENTOS ── */
+  .venc-urgente { background: #fee2e2 !important; }
+  .venc-pronto  { background: #fef9c3 !important; }
+  .dias-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 10px;
+    font-size: 0.72rem; font-weight: 700; white-space: nowrap;
+  }
+  .dias-urgente { background: #fee2e2; color: #991b1b; }
+  .dias-pronto  { background: #fef9c3; color: #854d0e; }
+  .dias-ok      { background: #dcfce7; color: #166534; }
+
+  /* ── TIMELINE ── */
+  .tl-activo-pill {
+    padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.76rem;
+    font-weight: 600; cursor: pointer; color: #6b84a8; transition: all 0.18s;
+  }
+  .tl-activo-pill:hover { border-color: var(--terra); color: var(--terra); }
+  .tl-activo-pill.active { background: var(--terra); border-color: var(--terra); color: white; }
+
+  .tl-wrap { position: relative; padding-left: 32px; }
+  .tl-wrap::before {
+    content: ''; position: absolute; left: 10px; top: 0; bottom: 0;
+    width: 2px; background: var(--border);
+  }
+  .tl-item {
+    position: relative; margin-bottom: 20px;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .tl-item::before {
+    content: ''; position: absolute; left: -27px; top: 20px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--terra); border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--terra);
+  }
+  .tl-item.futuro::before { background: var(--sage); box-shadow: 0 0 0 2px var(--sage); }
+  .tl-item.futuro { border-color: var(--sage); border-style: dashed; }
+  .tl-date { font-size: 0.72rem; font-weight: 700; color: #8a9ab5; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .tl-nombre { font-weight: 700; font-size: 0.92rem; color: var(--ink); margin-bottom: 4px; }
+  .tl-detail { font-size: 0.78rem; color: #8a9ab5; }
+  .tl-notas { font-size: 0.76rem; color: #aaa; font-style: italic; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
+  .tl-empty { text-align:center; padding:60px 20px; color:#ccc; font-size:0.88rem; }
+  .tl-header-card {
+    background: var(--ink2); border-radius: var(--radius); padding: 20px 24px;
+    margin-bottom: 28px; color: white;
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+  }
+  .tl-header-stat { text-align: center; }
+  .tl-header-stat-n { font-size: 1.6rem; font-weight: 700; color: white; letter-spacing: -0.02em; }
+  .tl-header-stat-l { font-size: 0.68rem; color: #7a9ab8; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; margin-top: 2px; }
+  .tl-header-divider { width: 1px; background: #2a4060; align-self: stretch; }
+
+  /* ── PENDIENTES ── */
+  .prob-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 8px;
+    font-size: 0.65rem; font-weight: 700; background: #fee2e2; color: #991b1b;
+    margin: 2px;
+  }
 
   /* ── API KEY BANNER ── */
   .apikey-banner {
-    background: #12122a;
-    border-bottom: 1px solid #2a2a4a;
+    background: var(--ink2);
+    border-bottom: 1px solid var(--border-dark);
     padding: 10px 48px;
     display: flex;
     align-items: center;
@@ -694,14 +761,14 @@
   .apikey-input-wrap { display: flex; align-items: center; gap: 8px; flex: 1; max-width: 460px; }
   .apikey-input-wrap input {
     flex: 1; padding: 7px 12px; border-radius: 8px; border: 1.5px solid #3a3a5e;
-    background: #0d0d1f; color: #faf8f4; font-family: monospace; font-size: 0.78rem;
+    background: #0d0d1f; color: #faf8f4; font-family: 'DM Mono', monospace; font-size: 0.78rem;
     outline: none; transition: border-color 0.2s;
   }
   .apikey-input-wrap input:focus { border-color: #b5614a; }
   .apikey-input-wrap input::placeholder { color: #444; }
   .btn-save-key {
     padding: 7px 16px; background: #b5614a; color: white; border: none; border-radius: 8px;
-    font-family: 'Outfit', sans-serif; font-size: 0.76rem; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; font-size: 0.76rem; font-weight: 600;
     cursor: pointer; transition: background 0.2s; white-space: nowrap;
   }
   .btn-save-key:hover { background: #c97a64; }
@@ -716,8 +783,8 @@
 
 <header>
   <div class="logo">
-    <div class="logo-icon">📊</div>
-    <div class="logo-text">Cocos <span>Capital</span></div>
+    <div class="logo-icon">◎</div>
+    <div class="logo-text">cocos <span>capital</span></div>
   </div>
   <div class="header-right">
     <div class="event-count">Historial: <strong id="hdr-count">0</strong> eventos</div>
@@ -743,6 +810,9 @@
     <span class="tab-badge" id="badge-pendientes" style="display:none">0</span>
   </div>
   <div class="tab" onclick="switchTab('instrumentos')">🏷️ Instrumentos</div>
+  <div class="tab" onclick="switchTab('vencimientos')">⏰ Vencimientos</div>
+  <div class="tab" onclick="switchTab('timeline')">📈 Por activo</div>
+  <div class="tab" onclick="switchTab('pendientes')">⚠️ Pendientes <span class="tab-badge" id="badge-pendientes-tab" style="display:none">0</span></div>
   <div class="tab" onclick="switchTab('tipos')">⚙️ Tipos de evento</div>
 </nav>
 
@@ -765,7 +835,7 @@
         <div class="rc-grid">
           <div class="rc-field full">
             <label>Nombre / Instrumento</label>
-            <input type="text" id="m-nombre" placeholder="Ej: Licitación Tesoro S31M5">
+            <input type="text" id="m-nombre" placeholder="Ej: PBJ26 o Licitación Tesoro S31M5" oninput="autocompleteTicker('m-nombre','m-empresa')" onblur="autocompleteTicker('m-nombre','m-empresa')">
           </div>
           <div class="rc-field">
             <label>Tipo de evento</label>
@@ -963,6 +1033,68 @@
   </div>
 
 
+  <!-- ═══ TAB VENCIMIENTOS ═══ -->
+  <div class="panel" id="panel-vencimientos">
+    <div class="page-header">
+      <div class="page-title">Vencimientos próximos</div>
+      <div class="page-sub">Pagos y eventos en los próximos 7, 30 y 90 días.</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:24px" id="venc-pills">
+      <button class="tipo-pill active" onclick="setVencPeriod(7,this)">7 días</button>
+      <button class="tipo-pill" onclick="setVencPeriod(30,this)">30 días</button>
+      <button class="tipo-pill" onclick="setVencPeriod(90,this)">90 días</button>
+    </div>
+    <div id="venc-stats" style="display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap"></div>
+    <div class="table-wrap">
+      <div class="table-info" id="venc-info">—</div>
+      <table>
+        <thead><tr>
+          <th>Días</th><th>Instrumento</th><th>Tipo</th><th>Empresa</th><th>Fecha</th><th>Monto</th><th>Moneda</th><th>PDF</th>
+        </tr></thead>
+        <tbody id="venc-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ TAB TIMELINE ═══ -->
+  <div class="panel" id="panel-timeline">
+    <div class="page-header">
+      <div class="page-title">Línea de tiempo por activo</div>
+      <div class="page-sub">Seleccioná un instrumento y ve todos sus eventos en orden cronológico.</div>
+    </div>
+    <div class="filters-bar" style="margin-bottom:24px">
+      <div class="field" style="flex:2">
+        <label>Instrumento / Ticker</label>
+        <input type="text" id="tl-search" placeholder="Escribí el nombre o ticker..." oninput="renderTimeline()">
+      </div>
+      <div class="field">
+        <label>Empresa</label>
+        <select id="tl-empresa" onchange="renderTimeline()"><option value="">Todas</option></select>
+      </div>
+    </div>
+    <div id="tl-selector" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px"></div>
+    <div id="tl-content"></div>
+  </div>
+
+  <!-- ═══ TAB PENDIENTES ═══ -->
+  <div class="panel" id="panel-pendientes">
+    <div class="page-header">
+      <div class="page-title">Eventos incompletos</div>
+      <div class="page-sub">Eventos con campos faltantes. Completalos para tener la bitácora limpia.</div>
+    </div>
+    <div id="pend-stats" style="display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap"></div>
+    <div class="table-wrap">
+      <div class="table-info" id="pend-info">—</div>
+      <table>
+        <thead><tr>
+          <th>Instrumento</th><th>Tipo</th><th>Empresa</th><th>Fecha</th><th>Monto</th><th>Problemas</th><th></th>
+        </tr></thead>
+        <tbody id="pend-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+
   <!-- ═══ TAB INSTRUMENTOS ═══ -->
   <div class="panel" id="panel-instrumentos">
     <div class="page-header">
@@ -1098,6 +1230,9 @@ function switchTab(tab) {
   if (tab === 'instrumentos') { renderInstrumentos(); }
   if (tab === 'calendario') { renderCal(); }
   if (tab === 'resumen') { renderResTipoPills(); renderResumen(); }
+  if (tab === 'vencimientos') { renderVencimientos(); }
+  if (tab === 'timeline') { renderTimeline(); }
+  if (tab === 'pendientes') { renderPendientes(); }
 }
 
 function formatDate(d) {
@@ -1301,7 +1436,7 @@ function addReviewCard(data, fileName) {
       <div class="rc-grid">
         <div class="rc-field full">
           <label>Nombre / Instrumento</label>
-          <input type="text" id="${cardId}-nombre" value="${escHtml(data.nombre || '')}">
+          <input type="text" id="${cardId}-nombre" value="${escHtml(data.nombre || '')}" oninput="autocompleteTickerCard('${cardId}')" onblur="autocompleteTickerCard('${cardId}')">
         </div>
         <div class="rc-field">
           <label>Tipo de evento</label>
@@ -1350,6 +1485,8 @@ function addReviewCard(data, fileName) {
   `;
   grid.appendChild(card);
   updatePendingBadge();
+  // Autocomplete from instrumento base
+  setTimeout(() => autocompleteTickerCard(cardId), 50);
   return cardId;
 }
 
@@ -1373,6 +1510,8 @@ function confirmCard(cardId, fileName) {
     pdfData: window._pendingPDFs?.[cardId] || null,
     pdfName: window._pendingPDFs?.[cardId] ? fileName : null
   };
+  const dupWarn = checkDuplicateBeforeSave(event);
+  if (dupWarn && !confirm(dupWarn + '\n\n¿Guardás igual?')) return;
   history.unshift(event);
   saveHistory();
   if (window._pendingPDFs) delete window._pendingPDFs[cardId];
@@ -1657,7 +1796,7 @@ function exportPDF() {
   .header { border-bottom: 3px solid #b5614a; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
   .title { font-size: 22px; font-weight: bold; color: #1a1a2e; }
   .subtitle { font-size: 12px; color: #b5614a; margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
-  .meta { font-size: 10px; color: #888; text-align: right; }
+  .meta { font-size: 10px; color: #8a9ab5; text-align: right; }
   table { width: 100%; border-collapse: collapse; margin-top: 8px; }
   thead { background: #1a1a2e; color: white; }
   thead th { padding: 8px 10px; text-align: left; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; font-family: Arial, sans-serif; }
@@ -1669,7 +1808,7 @@ function exportPDF() {
   .stats { display: flex; gap: 24px; margin-bottom: 20px; }
   .stat { background: #faf8f4; border-left: 3px solid #b5614a; padding: 8px 14px; }
   .stat-n { font-size: 18px; font-weight: bold; color: #1a1a2e; }
-  .stat-l { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; font-family: Arial, sans-serif; }
+  .stat-l { font-size: 9px; color: #8a9ab5; text-transform: uppercase; letter-spacing: 0.06em; font-family: Arial, sans-serif; }
   @media print { body { padding: 20px; } }
 </style>
 </head>
@@ -1944,7 +2083,7 @@ function exportResumenPDF() {
   .res-event-name { font-weight: bold; font-size: 11px; margin-bottom: 3px; }
   .badge-inline { display:inline-block; padding:1px 7px; border-radius:8px; font-size:9px; font-weight:700; background:#f3f4f6; color:#555; font-family:Arial,sans-serif; margin-left:6px; }
   .detail { font-size: 10px; color: #777; margin-top: 2px; font-family: Arial, sans-serif; }
-  .notas { font-size: 10px; color: #aaa; font-style: italic; margin-top: 3px; font-family: Arial, sans-serif; }
+  .notas { font-size: 10px; color: #aaa;  margin-top: 3px; font-family: Arial, sans-serif; }
   .footer { margin-top: 32px; font-size: 9px; color: #bbb; text-align: center; border-top: 1px solid #e5ddd5; padding-top: 12px; font-family: Arial, sans-serif; }
   @media print { body { padding: 20px 30px; } }
 </style>
@@ -2109,6 +2248,295 @@ function toggleResTipo(tipo) {
   renderResumen();
 }
 
+
+
+
+// ════════════════════════════════
+//  DUPLICATE DETECTION
+// ════════════════════════════════
+function checkDuplicateBeforeSave(event) {
+  const dup = history.find(e =>
+    e.fecha === event.fecha &&
+    (e.nombre || '').toUpperCase().trim() === (event.nombre || '').toUpperCase().trim() &&
+    (e.tipo || '') === (event.tipo || '')
+  );
+  if (dup) {
+    return `Posible duplicado: ya existe "${dup.nombre}" del ${formatDate(dup.fecha)} (${dup.tipo})`;
+  }
+  return null;
+}
+
+// ════════════════════════════════
+//  VENCIMIENTOS
+// ════════════════════════════════
+let vencPeriod = 30;
+
+function setVencPeriod(days, btn) {
+  vencPeriod = days;
+  document.querySelectorAll('#venc-pills .tipo-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderVencimientos();
+}
+
+function renderVencimientos() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const cutoff = new Date(today); cutoff.setDate(cutoff.getDate() + vencPeriod);
+
+  const upcoming = history.filter(e => {
+    if (!e.fecha) return false;
+    const d = new Date(e.fecha); d.setHours(0,0,0,0);
+    return d >= today && d <= cutoff;
+  }).sort((a,b) => a.fecha > b.fecha ? 1 : -1);
+
+  document.getElementById('venc-info').textContent = `${upcoming.length} evento${upcoming.length!==1?'s':''} en los próximos ${vencPeriod} días`;
+
+  const statsEl = document.getElementById('venc-stats');
+  const en7 = upcoming.filter(e => { const d=new Date(e.fecha); d.setHours(0,0,0,0); return (d-today)/86400000 <= 7; }).length;
+  const tipos = {};
+  upcoming.forEach(e => { tipos[e.tipo||'Otro'] = (tipos[e.tipo||'Otro']||0)+1; });
+  statsEl.innerHTML = [
+    `<div class="stat-card s1" style="padding:12px 16px;flex:none"><div class="stat-num" style="font-size:1.4rem">${upcoming.length}</div><div class="stat-label">Total ${vencPeriod}d</div></div>`,
+    `<div class="stat-card s3" style="padding:12px 16px;flex:none"><div class="stat-num" style="font-size:1.4rem">${en7}</div><div class="stat-label">Esta semana</div></div>`,
+    ...Object.entries(tipos).map(([t,n]) => {
+      const c = getTipoColor(t);
+      return `<div class="stat-card" style="padding:12px 16px;flex:none;border-left-color:${c.color}"><div class="stat-num" style="font-size:1.4rem;color:${c.color}">${n}</div><div class="stat-label">${escHtml(t)}</div></div>`;
+    })
+  ].join('');
+
+  const tbody = document.getElementById('venc-tbody');
+  if (!upcoming.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#x2705;</div><div class="empty-text">Sin vencimientos en los próximos ${vencPeriod} días</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = upcoming.map(e => {
+    const d = new Date(e.fecha); d.setHours(0,0,0,0);
+    const dias = Math.round((d - today) / 86400000);
+    const urgClass = dias <= 7 ? 'venc-urgente' : dias <= 14 ? 'venc-pronto' : '';
+    const diasBadgeClass = dias <= 7 ? 'dias-urgente' : dias <= 14 ? 'dias-pronto' : 'dias-ok';
+    const c = getTipoColor(e.tipo);
+    return `<tr class="${urgClass}">
+      <td><span class="dias-badge ${diasBadgeClass}">${dias === 0 ? 'HOY' : dias + 'd'}</span></td>
+      <td><strong>${escHtml(e.nombre||'&#8212;')}</strong></td>
+      <td><span class="badge" style="background:${c.bg};color:${c.color}">${escHtml(e.tipo||'&#8212;')}</span></td>
+      <td>${escHtml(e.empresa||'&#8212;')}</td>
+      <td>${formatDate(e.fecha)}</td>
+      <td>${e.monto ? Number(e.monto).toLocaleString('es-AR') : '&#8212;'}</td>
+      <td>${escHtml(e.moneda||'&#8212;')}</td>
+      <td>${e.pdfData ? `<button class="btn-del" onclick="downloadPDF(${e.id})" style="color:var(--sky)">&#x2B07;</button>` : '&#8212;'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════
+//  TIMELINE POR ACTIVO
+// ════════════════════════════════
+let tlSelected = null;
+
+function buildInstMap() {
+  const instMap = {};
+  history.forEach(e => {
+    const key = (e.nombre||'').trim().toUpperCase();
+    if (!key) return;
+    if (!instMap[key]) instMap[key] = { nombre: e.nombre, empresa: e.empresa, eventos: [] };
+    instMap[key].eventos.push(e);
+  });
+  return instMap;
+}
+
+function renderTimeline() {
+  const search = (document.getElementById('tl-search')?.value || '').toLowerCase();
+  const empresa = document.getElementById('tl-empresa')?.value || '';
+  const instMap = buildInstMap();
+
+  const empSel = document.getElementById('tl-empresa');
+  if (empSel) {
+    const cur = empSel.value;
+    const empresas = [...new Set(history.map(e=>e.empresa).filter(Boolean))].sort();
+    empSel.innerHTML = '<option value="">Todas</option>' + empresas.map(em =>
+      `<option ${em===cur?'selected':''}>${escHtml(em)}</option>`
+    ).join('');
+    empSel.value = cur;
+  }
+
+  const filtered = Object.values(instMap).filter(i => {
+    if (search && !i.nombre.toLowerCase().includes(search)) return false;
+    if (empresa && i.empresa !== empresa) return false;
+    return true;
+  }).sort((a,b) => a.nombre > b.nombre ? 1 : -1);
+
+  const pillsEl = document.getElementById('tl-selector');
+  if (!pillsEl) return;
+  pillsEl.innerHTML = filtered.length
+    ? filtered.map(i => `<button class="tl-activo-pill${tlSelected===i.nombre.toUpperCase()?' active':''}" onclick="selectTLActivo('${escHtml(i.nombre.toUpperCase()).replace(/'/g,"&#39;")}')">${escHtml(i.nombre)}</button>`).join('')
+    : '<span style="font-size:0.82rem;color:#aaa">No hay instrumentos que coincidan</span>';
+
+  if (!tlSelected && filtered.length) tlSelected = filtered[0].nombre.toUpperCase();
+  renderTLContent(instMap);
+}
+
+function selectTLActivo(key) {
+  tlSelected = key;
+  document.querySelectorAll('.tl-activo-pill').forEach(p => {
+    p.classList.toggle('active', p.textContent.trim().toUpperCase() === key);
+  });
+  renderTLContent(buildInstMap());
+}
+
+function renderTLContent(instMap) {
+  const content = document.getElementById('tl-content');
+  if (!content) return;
+  if (!tlSelected || !instMap[tlSelected]) {
+    content.innerHTML = '<div class="tl-empty">Seleccioná un instrumento para ver su línea de tiempo</div>';
+    return;
+  }
+
+  const inst = instMap[tlSelected];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const sorted = [...inst.eventos].sort((a,b) => (a.fecha||'') > (b.fecha||'') ? 1 : -1);
+  const pasados = sorted.filter(e => !e.fecha || new Date(e.fecha) < today);
+  const futuros = sorted.filter(e => e.fecha && new Date(e.fecha) >= today);
+  const info = lookupInstrumento(tlSelected) || {};
+  const nombreCompleto = info.nombre || inst.nombre;
+  const emisor = info.emisor || inst.empresa || '&#8212;';
+
+  content.innerHTML = `
+    <div class="tl-header-card">
+      <div style="flex:1">
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px">${escHtml(nombreCompleto)}</div>
+        <div style="font-size:0.78rem;color:#7a9ab8">${escHtml(emisor)}</div>
+      </div>
+      <div class="tl-header-divider"></div>
+      <div class="tl-header-stat"><div class="tl-header-stat-n">${sorted.length}</div><div class="tl-header-stat-l">Eventos</div></div>
+      <div class="tl-header-divider"></div>
+      <div class="tl-header-stat"><div class="tl-header-stat-n">${pasados.length}</div><div class="tl-header-stat-l">Pasados</div></div>
+      <div class="tl-header-divider"></div>
+      <div class="tl-header-stat"><div class="tl-header-stat-n" style="color:var(--sage)">${futuros.length}</div><div class="tl-header-stat-l">Próximos</div></div>
+    </div>
+    <div class="tl-wrap">
+      ${sorted.map(e => {
+        const esFuturo = e.fecha && new Date(e.fecha) >= today;
+        const c = getTipoColor(e.tipo);
+        const detalles = [
+          e.monto ? `${Number(e.monto).toLocaleString('es-AR')} ${e.moneda||''}` : null,
+          e.empresa || null
+        ].filter(Boolean).join(' &middot; ');
+        return `<div class="tl-item${esFuturo?' futuro':''}">
+          <div class="tl-date">${esFuturo?'&#x1F4C5; ':''} ${formatDate(e.fecha)||'Sin fecha'}</div>
+          <div class="tl-nombre">
+            <span class="badge" style="background:${c.bg};color:${c.color};margin-right:8px">${escHtml(e.tipo||'&#8212;')}</span>
+            ${escHtml(e.nombre||'&#8212;')}
+          </div>
+          ${detalles ? `<div class="tl-detail">${detalles}</div>` : ''}
+          ${e.notas ? `<div class="tl-notas">&#x1F4DD; ${escHtml(e.notas)}</div>` : ''}
+          ${e.pdfData ? `<div style="margin-top:8px"><button class="btn-del" onclick="downloadPDF(${e.id})" style="color:var(--sky);font-size:0.78rem">&#x2B07; Descargar PDF</button></div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ════════════════════════════════
+//  PENDIENTES / INCOMPLETOS
+// ════════════════════════════════
+function getProblemas(e) {
+  const probs = [];
+  if (!e.nombre) probs.push('Sin nombre');
+  if (!e.tipo) probs.push('Sin tipo');
+  if (!e.empresa) probs.push('Sin emisor');
+  if (!e.fecha) probs.push('Sin fecha');
+  if (!e.monto) probs.push('Sin monto');
+  if (!e.pdfData) probs.push('Sin PDF');
+  return probs;
+}
+
+function renderPendientes() {
+  const incompletos = history.filter(e => getProblemas(e).length > 0)
+    .sort((a,b) => getProblemas(b).length - getProblemas(a).length);
+
+  const badge = document.getElementById('badge-pendientes-tab');
+  if (badge) { badge.style.display = incompletos.length ? '' : 'none'; badge.textContent = incompletos.length; }
+
+  const statsEl = document.getElementById('pend-stats');
+  if (statsEl) {
+    const sinPDF = incompletos.filter(e => !e.pdfData).length;
+    const sinMonto = incompletos.filter(e => !e.monto).length;
+    const sinFecha = incompletos.filter(e => !e.fecha).length;
+    statsEl.innerHTML = [
+      `<div class="stat-card s1" style="padding:12px 16px;flex:none"><div class="stat-num" style="font-size:1.4rem">${incompletos.length}</div><div class="stat-label">Incompletos</div></div>`,
+      `<div class="stat-card" style="padding:12px 16px;flex:none;border-left-color:#6b84a8"><div class="stat-num" style="font-size:1.4rem">${sinPDF}</div><div class="stat-label">Sin PDF</div></div>`,
+      `<div class="stat-card" style="padding:12px 16px;flex:none;border-left-color:var(--gold)"><div class="stat-num" style="font-size:1.4rem">${sinMonto}</div><div class="stat-label">Sin monto</div></div>`,
+      `<div class="stat-card" style="padding:12px 16px;flex:none;border-left-color:var(--terra)"><div class="stat-num" style="font-size:1.4rem">${sinFecha}</div><div class="stat-label">Sin fecha</div></div>`,
+    ].join('');
+  }
+
+  const infoEl = document.getElementById('pend-info');
+  if (infoEl) infoEl.textContent = `${incompletos.length} evento${incompletos.length!==1?'s':''} con campos incompletos`;
+
+  const tbody = document.getElementById('pend-tbody');
+  if (!tbody) return;
+  if (!incompletos.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">&#x2705;</div><div class="empty-text">Todo completo. No hay eventos con campos faltantes.</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = incompletos.map(e => {
+    const probs = getProblemas(e);
+    const c = getTipoColor(e.tipo);
+    return `<tr>
+      <td><strong>${escHtml(e.nombre||'&#8212;')}</strong></td>
+      <td>${e.tipo ? `<span class="badge" style="background:${c.bg};color:${c.color}">${escHtml(e.tipo)}</span>` : '&#8212;'}</td>
+      <td>${escHtml(e.empresa||'&#8212;')}</td>
+      <td>${formatDate(e.fecha)||'&#8212;'}</td>
+      <td>${e.monto ? Number(e.monto).toLocaleString('es-AR') : '&#8212;'}</td>
+      <td>${probs.map(p => `<span class="prob-tag">${p}</span>`).join('')}</td>
+      <td>
+        <button class="btn-del" onclick="openNota(${e.id})" style="color:var(--gold)" title="Nota">&#x1F4DD;</button>
+        <button class="btn-del" onclick="deleteEvent(${e.id})" title="Eliminar">&#x2715;</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+
+// ════════════════════════════════
+//  TICKER AUTOCOMPLETE
+// ════════════════════════════════
+function autocompleteTicker(nombreId, empresaId) {
+  const val = document.getElementById(nombreId)?.value?.trim().toUpperCase();
+  if (!val) return;
+  const info = lookupInstrumento(val);
+  if (!info) return;
+  // Only autofill if empresa is empty or was previously autofilled
+  const empresaEl = document.getElementById(empresaId);
+  if (empresaEl && (!empresaEl.value || empresaEl.dataset.auto === 'true')) {
+    if (info.nombre) document.getElementById(nombreId).value = info.nombre;
+    if (info.emisor) { empresaEl.value = info.emisor; empresaEl.dataset.auto = 'true'; }
+  } else if (empresaEl && !empresaEl.value) {
+    if (info.nombre) document.getElementById(nombreId).value = info.nombre;
+    if (info.emisor) { empresaEl.value = info.emisor; empresaEl.dataset.auto = 'true'; }
+  }
+}
+
+function autocompleteTickerCard(cardId) {
+  const nombreEl = document.getElementById(`${cardId}-nombre`);
+  const empresaEl = document.getElementById(`${cardId}-empresa`);
+  if (!nombreEl) return;
+  const val = nombreEl.value.trim().toUpperCase();
+  if (!val) return;
+  const info = lookupInstrumento(val);
+  if (!info) return;
+  if (info.nombre && nombreEl.dataset.auto !== 'false') {
+    nombreEl.value = info.nombre;
+    nombreEl.dataset.auto = 'true';
+  }
+  if (empresaEl && (!empresaEl.value || empresaEl.dataset.auto === 'true')) {
+    if (info.emisor) { empresaEl.value = info.emisor; empresaEl.dataset.auto = 'true'; }
+  }
+}
+
+// Also run autocomplete when review cards are created
+const _origAddReviewCard = addReviewCard;
 
 // ════════════════════════════════
 //  NOTAS
@@ -2370,6 +2798,8 @@ async function saveManual() {
     pdfName
   };
 
+  const dupWarnM = checkDuplicateBeforeSave(event);
+  if (dupWarnM && !confirm(dupWarnM + '\n\n¿Guardás igual?')) return;
   history.unshift(event);
   saveHistory();
   closeManualForm();
@@ -2404,6 +2834,7 @@ renderCal();
 renderResTipoPills();
 renderResumen();
 renderInstrumentos();
+renderPendientes();
 </script>
 </body>
 </html>
