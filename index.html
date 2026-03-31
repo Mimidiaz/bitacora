@@ -779,15 +779,7 @@
             <label>Fecha del evento</label>
             <input type="date" id="m-fecha">
           </div>
-          <div class="rc-field">
-            <label>Estado</label>
-            <select id="m-estado">
-              <option>Anunciado</option>
-              <option>En curso</option>
-              <option>Liquidado</option>
-              <option>Cancelado</option>
-            </select>
-          </div>
+
           <div class="rc-field">
             <label>Monto</label>
             <input type="number" id="m-monto" placeholder="Ej: 1000000000">
@@ -869,8 +861,7 @@
 
     <div class="stats-row" id="stats-row">
       <div class="stat-card s1"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total</div></div>
-      <div class="stat-card s2"><div class="stat-num" id="s-liq">0</div><div class="stat-label">Liquidados</div></div>
-      <div class="stat-card s3"><div class="stat-num" id="s-curso">0</div><div class="stat-label">En curso</div></div>
+      
       <div class="stat-card s4"><div class="stat-num" id="s-mes">0</div><div class="stat-label">Este mes</div></div>
       <div class="stat-card s5"><div class="stat-num" id="s-emisores">0</div><div class="stat-label">Emisores únicos</div></div>
     </div>
@@ -891,16 +882,7 @@
           <option>Otro</option>
         </select>
       </div>
-      <div class="field">
-        <label>Estado</label>
-        <select id="f-estado" onchange="renderTable()">
-          <option value="">Todos</option>
-          <option>Anunciado</option>
-          <option>En curso</option>
-          <option>Liquidado</option>
-          <option>Cancelado</option>
-        </select>
-      </div>
+
       <div class="field">
         <label>Empresa</label>
         <select id="f-empresa" onchange="renderTable()">
@@ -929,7 +911,6 @@
             <th>Tipo</th>
             <th>Empresa</th>
             <th>Fecha</th>
-            <th>Estado</th>
             <th>Monto</th>
             <th>Moneda</th>
             <th>Notas</th>
@@ -971,16 +952,7 @@
         <label>Hasta</label>
         <input type="date" id="res-hasta" onchange="renderResumen()">
       </div>
-      <div class="field">
-        <label>Estado</label>
-        <select id="res-estado" onchange="renderResumen()">
-          <option value="">Todos</option>
-          <option>Anunciado</option>
-          <option>En curso</option>
-          <option>Liquidado</option>
-          <option>Cancelado</option>
-        </select>
-      </div>
+
       <button class="btn-pdf-resumen" onclick="exportResumenPDF()">⬇ Descargar PDF</button>
     </div>
     <div style="margin-bottom:20px">
@@ -1073,6 +1045,22 @@
 
 
 </main>
+
+<div id="nota-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:var(--radius);padding:28px;width:100%;max-width:500px;box-shadow:var(--shadow-lg);margin:20px">
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink);margin-bottom:6px" id="nota-modal-title">Nota del evento</div>
+    <div style="font-size:0.75rem;color:#aaa;margin-bottom:16px" id="nota-modal-sub"></div>
+    <div class="rc-field" style="margin-bottom:16px">
+      <label>Nota / Suceso</label>
+      <textarea id="nota-textarea" style="min-height:100px" placeholder="Agregá observaciones, incidencias o cualquier suceso relevante..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn-discard" onclick="closeNota()">Cancelar</button>
+      <button class="btn-confirm" onclick="saveNota()">Guardar nota</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="toast" id="toast"></div>
 
@@ -1233,7 +1221,6 @@ El JSON debe tener exactamente esta estructura:
   "tipo": "uno de: Licitación Tesoro | Licitación ON | Colocación Primaria | Evento Corporativo | Otro",
   "empresa": "nombre de la empresa o entidad emisora",
   "fecha": "fecha en formato YYYY-MM-DD o vacío si no se encuentra",
-  "estado": "uno de: Anunciado | En curso | Liquidado | Cancelado | desconocido",
   "monto": "monto nominal como número sin puntos ni comas, o vacío",
   "moneda": "ARS | USD | USD-Linked | EUR | otro",
   "notas": "resumen breve de 1-2 oraciones con los datos más relevantes del documento",
@@ -1378,7 +1365,6 @@ function confirmCard(cardId, fileName) {
     tipo: get('tipo'),
     empresa: get('empresa'),
     fecha: get('fecha'),
-    estado: get('estado'),
     monto: get('monto'),
     moneda: get('moneda'),
     notas: get('notas'),
@@ -1441,7 +1427,6 @@ function updateStats() {
 function getFiltered() {
   const nombre = document.getElementById('f-nombre').value.toLowerCase();
   const tipo = document.getElementById('f-tipo').value;
-  const estado = document.getElementById('f-estado').value;
   const empresa = document.getElementById('f-empresa').value;
   const desde = document.getElementById('f-desde').value;
   const hasta = document.getElementById('f-hasta').value;
@@ -1449,7 +1434,6 @@ function getFiltered() {
   return history.filter(e => {
     if (nombre && !`${e.nombre} ${e.empresa}`.toLowerCase().includes(nombre)) return false;
     if (tipo && e.tipo !== tipo) return false;
-    if (estado && e.estado !== estado) return false;
     if (empresa && e.empresa !== empresa) return false;
     if (desde && e.fecha && e.fecha < desde) return false;
     if (hasta && e.fecha && e.fecha > hasta) return false;
@@ -1492,9 +1476,10 @@ function renderTable() {
       <td>${estadoBadge(e.estado)}</td>
       <td>${e.monto ? Number(e.monto).toLocaleString('es-AR') : '—'}</td>
       <td>${escHtml(e.moneda || '—')}</td>
-      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escHtml(e.notas||'')}">${escHtml(e.notas || '—')}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-style:italic;color:#888;" title="${escHtml(e.notas||'')}">${escHtml(e.notas || '—')}</td>
       <td style="white-space:nowrap">
         ${e.pdfData ? `<button class="btn-del" onclick="downloadPDF(${e.id})" title="Descargar PDF" style="color:var(--sky);font-size:1rem">⬇</button>` : ''}
+        <button class="btn-del" onclick="openNota(${e.id})" title="Agregar nota" style="color:var(--gold)">📝</button>
         <button class="btn-del" onclick="deleteEvent(${e.id})" title="Eliminar">✕</button>
       </td>
     </tr>
@@ -1512,7 +1497,7 @@ function deleteEvent(id) {
 
 function clearFilters() {
   ['f-nombre','f-desde','f-hasta'].forEach(id => document.getElementById(id).value = '');
-  ['f-tipo','f-estado','f-empresa'].forEach(id => document.getElementById(id).value = '');
+  ['f-tipo','f-empresa'].forEach(id => document.getElementById(id).value = '');
   renderTable();
 }
 
@@ -1655,7 +1640,6 @@ function exportPDF() {
       <td>${escHtml(e.tipo||'—')}</td>
       <td>${escHtml(e.empresa||'—')}</td>
       <td>${formatDate(e.fecha)||'—'}</td>
-      <td>${escHtml(e.estado||'—')}</td>
       <td>${e.monto ? Number(e.monto).toLocaleString('es-AR') : '—'}</td>
       <td>${escHtml(e.moneda||'—')}</td>
       <td>${escHtml(e.notas||'—')}</td>
@@ -1710,7 +1694,7 @@ function exportPDF() {
   <thead>
     <tr>
       <th>Instrumento</th><th>Tipo</th><th>Empresa</th><th>Fecha</th>
-      <th>Estado</th><th>Monto</th><th>Moneda</th><th>Notas</th>
+      <th>Monto</th><th>Moneda</th><th>Notas</th>
     </tr>
   </thead>
   <tbody>${rows}</tbody>
@@ -1831,11 +1815,9 @@ function renderCal() {
 function getResumenFiltered() {
   const desde = document.getElementById('res-desde')?.value || '';
   const hasta = document.getElementById('res-hasta')?.value || '';
-  const estado = document.getElementById('res-estado')?.value || '';
   return history.filter(e => {
     if (desde && e.fecha && e.fecha < desde) return false;
     if (hasta && e.fecha && e.fecha > hasta) return false;
-    if (estado && e.estado !== estado) return false;
     if (resTiposSelected.size > 0 && !resTiposSelected.has(e.tipo)) return false;
     return true;
   });
@@ -1853,9 +1835,7 @@ function renderResumen() {
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
-  const liq = events.filter(e => e.estado === 'Liquidado').length;
-  const curso = events.filter(e => e.estado === 'En curso').length;
-  const emisores = new Set(events.map(e => e.empresa).filter(Boolean)).size;
+      const emisores = new Set(events.map(e => e.empresa).filter(Boolean)).size;
 
   // Group by tipo
   const grupos = {};
@@ -1865,14 +1845,11 @@ function renderResumen() {
     grupos[t].push(e);
   });
 
-  const estadoBadgeColor = { 'En curso':'#854d0e','Liquidado':'#166534','Cancelado':'#991b1b','Anunciado':'#0369a1' };
-  const estadoBadgeBg = { 'En curso':'#fef9c3','Liquidado':'#dcfce7','Cancelado':'#fee2e2','Anunciado':'#e0f2fe' };
-
+    
   const gruposHtml = Object.entries(grupos).map(([tipo, evs]) => {
     const c = getTipoColor(tipo);
     const evRows = evs.sort((a,b) => (a.fecha||'') > (b.fecha||'') ? 1 : -1).map(e => {
-      const estadoStyle = `background:${estadoBadgeBg[e.estado]||'#f3f4f6'};color:${estadoBadgeColor[e.estado]||'#4b5563'}`;
-      const details = [
+            const details = [
         e.empresa ? `<strong>${escHtml(e.empresa)}</strong>` : null,
         e.monto ? `${Number(e.monto).toLocaleString('es-AR')} ${escHtml(e.moneda||'')}` : null,
       ].filter(Boolean).join(' · ');
@@ -1881,7 +1858,6 @@ function renderResumen() {
         <div class="res-event-body">
           <div class="res-event-name">
             ${escHtml(e.nombre||'—')}
-            <span class="res-event-badge" style="${estadoStyle}">${escHtml(e.estado||'')}</span>
           </div>
           ${details ? `<div class="res-event-detail">${details}</div>` : ''}
           ${e.notas ? `<div class="res-event-notas">${escHtml(e.notas)}</div>` : ''}
@@ -1904,10 +1880,7 @@ function renderResumen() {
       <div class="res-meta">Generado: ${dateStr}<br>${events.length} evento${events.length!==1?'s':''}</div>
     </div>
     <div class="res-stats">
-      <div class="res-stat"><div class="res-stat-n">${events.length}</div><div class="res-stat-l">Total</div></div>
-      <div class="res-stat" style="border-color:var(--sage)"><div class="res-stat-n">${liq}</div><div class="res-stat-l">Liquidados</div></div>
-      <div class="res-stat" style="border-color:var(--gold)"><div class="res-stat-n">${curso}</div><div class="res-stat-l">En curso</div></div>
-      <div class="res-stat" style="border-color:var(--sky)"><div class="res-stat-n">${emisores}</div><div class="res-stat-l">Emisores</div></div>
+      <div class="res-stat"><div class="res-stat-n">${events.length}</div><div class="res-stat-l">Total</div></div>      <div class="res-stat" style="border-color:var(--sky)"><div class="res-stat-n">${emisores}</div><div class="res-stat-l">Emisores</div></div>
     </div>
     ${gruposHtml}
   `;
@@ -1919,9 +1892,7 @@ function exportResumenPDF() {
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
-  const liq = events.filter(e => e.estado === 'Liquidado').length;
-  const curso = events.filter(e => e.estado === 'En curso').length;
-  const emisores = new Set(events.map(e => e.empresa).filter(Boolean)).size;
+      const emisores = new Set(events.map(e => e.empresa).filter(Boolean)).size;
 
   const grupos = {};
   events.forEach(e => {
@@ -1987,10 +1958,7 @@ function exportResumenPDF() {
   <div class="meta">Generado: ${dateStr}<br>${events.length} evento${events.length!==1?'s':''}</div>
 </div>
 <div class="stats">
-  <div class="stat"><div class="stat-n">${events.length}</div><div class="stat-l">Total</div></div>
-  <div class="stat" style="border-color:#7a9e7e"><div class="stat-n">${liq}</div><div class="stat-l">Liquidados</div></div>
-  <div class="stat" style="border-color:#c9973a"><div class="stat-n">${curso}</div><div class="stat-l">En curso</div></div>
-  <div class="stat" style="border-color:#6a9ec8"><div class="stat-n">${emisores}</div><div class="stat-l">Emisores únicos</div></div>
+  <div class="stat"><div class="stat-n">${events.length}</div><div class="stat-l">Total</div></div>  <div class="stat" style="border-color:#6a9ec8"><div class="stat-n">${emisores}</div><div class="stat-l">Emisores únicos</div></div>
 </div>
 ${gruposHtml}
 <div class="footer">Cocos Capital · Bitácora de Mercado de Capitales · Documento de uso interno</div>
@@ -2140,6 +2108,47 @@ function toggleResTipo(tipo) {
   renderResTipoPills();
   renderResumen();
 }
+
+
+// ════════════════════════════════
+//  NOTAS
+// ════════════════════════════════
+let _notaEventId = null;
+
+function openNota(id) {
+  const event = history.find(e => e.id === id);
+  if (!event) return;
+  _notaEventId = id;
+  document.getElementById('nota-modal-title').textContent = event.nombre || 'Nota del evento';
+  document.getElementById('nota-modal-sub').textContent = event.empresa ? `${event.empresa} · ${formatDate(event.fecha)||''}` : formatDate(event.fecha)||'';
+  document.getElementById('nota-textarea').value = event.notas || '';
+  const modal = document.getElementById('nota-modal');
+  modal.style.display = 'flex';
+  setTimeout(() => document.getElementById('nota-textarea').focus(), 50);
+}
+
+function closeNota() {
+  document.getElementById('nota-modal').style.display = 'none';
+  _notaEventId = null;
+}
+
+function saveNota() {
+  if (!_notaEventId) return;
+  const nota = document.getElementById('nota-textarea').value.trim();
+  const idx = history.findIndex(e => e.id === _notaEventId);
+  if (idx > -1) {
+    history[idx].notas = nota;
+    saveHistory();
+    renderTable();
+    showToast('✓ Nota guardada');
+  }
+  closeNota();
+}
+
+// Close modal on backdrop click
+document.getElementById('nota-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeNota();
+});
 
 // ════════════════════════════════
 //  PASTE PARSER
@@ -2298,7 +2307,6 @@ function parsePaste() {
         tipo,
         empresa: info?.emisor || '',
         fecha,
-        estado: '',
         monto: '',
         moneda: '',
         notas: '',
@@ -2353,7 +2361,6 @@ async function saveManual() {
     tipo: document.getElementById('m-tipo').value,
     empresa: document.getElementById('m-empresa').value.trim(),
     fecha: document.getElementById('m-fecha').value,
-    estado: document.getElementById('m-estado').value,
     monto: document.getElementById('m-monto').value,
     moneda: document.getElementById('m-moneda').value,
     notas: document.getElementById('m-notas').value.trim(),
