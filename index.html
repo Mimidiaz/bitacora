@@ -594,10 +594,10 @@
   </div>
 </header>
 
-<div class="apikey-banner" id="apikey-banner">
+<div class="apikey-banner" id="apikey-banner" style="display:none">
   <label>API Key</label>
   <div class="apikey-input-wrap">
-    <input type="password" id="apikey-input" placeholder="AIzaSy..." autocomplete="off">
+    <input type="password" id="apikey-input" placeholder="No necesaria — el proxy maneja la autenticación" autocomplete="off">
     <button class="btn-save-key" onclick="saveApiKey()">Guardar</button>
   </div>
   <span class="key-status" id="key-status">Sin key — la IA no va a funcionar</span>
@@ -890,42 +890,40 @@ El JSON debe tener exactamente esta estructura:
   if (fileContent.type === 'pdf') {
     parts = [
       {
-        inline_data: {
-          mime_type: 'application/pdf',
-          data: fileContent.data
-        }
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: fileContent.data }
       },
       {
+        type: 'text',
         text: `Extraé la información del documento financiero "${fileName}" y devolvé el JSON estructurado.`
       }
     ];
   } else {
     const truncated = fileContent.data.substring(0, 8000);
     parts = [{
+      type: 'text',
       text: `Extraé la información del siguiente documento financiero llamado "${fileName}" y devolvé el JSON estructurado.\n\nContenido:\n${truncated}`
     }];
   }
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ parts }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 1000 }
-      })
-    }
-  );
+  const response = await fetch('https://wispy-salad-4ed6.miriamalcarazdiaz.workers.dev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: parts }]
+    })
+  });
 
   if (!response.ok) {
     const err = await response.json();
-    throw new Error(err.error?.message || 'Error Gemini API');
+    throw new Error(err.error?.message || 'Error del proxy');
   }
 
   const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const text = data.content?.map(b => b.text || '').join('') || '';
 
   try {
     const clean = text.replace(/```json|```/g, '').trim();
