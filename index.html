@@ -668,6 +668,15 @@
   }
   .btn-pdf-resumen:hover { background: var(--ink); }
 
+
+  .tipo-pill {
+    padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: var(--white); font-family: 'Outfit', sans-serif; font-size: 0.76rem;
+    font-weight: 600; cursor: pointer; color: var(--dusty); transition: all 0.18s;
+  }
+  .tipo-pill:hover { border-color: var(--terra); color: var(--terra); }
+  .tipo-pill.active { background: var(--terra); border-color: var(--terra); color: white; }
+
   /* ── API KEY BANNER ── */
   .apikey-banner {
     background: #12122a;
@@ -733,6 +742,7 @@
     📄 Cargar documentos
     <span class="tab-badge" id="badge-pendientes" style="display:none">0</span>
   </div>
+  <div class="tab" onclick="switchTab('instrumentos')">🏷️ Instrumentos</div>
   <div class="tab" onclick="switchTab('tipos')">⚙️ Tipos de evento</div>
 </nav>
 
@@ -842,8 +852,9 @@
     </div>
 
     <div class="review-section" id="review-section" style="display:none">
-      <div class="queue-title" style="margin-bottom:20px">
-        Revisá y confirmá los eventos extraídos
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div class="queue-title" style="margin-bottom:0">Revisá y confirmá los eventos extraídos</div>
+        <button class="btn-confirm" onclick="confirmAll()" style="font-size:0.78rem">✓ Aceptar todos</button>
       </div>
       <div class="review-grid" id="review-grid"></div>
     </div>
@@ -972,7 +983,51 @@
       </div>
       <button class="btn-pdf-resumen" onclick="exportResumenPDF()">⬇ Descargar PDF</button>
     </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--terra);margin-bottom:8px">Tipos de evento</div>
+      <div id="res-tipo-pills" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
     <div class="resumen-body" id="resumen-body"></div>
+  </div>
+
+
+  <!-- ═══ TAB INSTRUMENTOS ═══ -->
+  <div class="panel" id="panel-instrumentos">
+    <div class="page-header">
+      <div class="page-title">Instrumentos</div>
+      <div class="page-sub">Base de tickers con nombre completo y emisor. Se usa para completar automáticamente los eventos cargados desde planilla.</div>
+    </div>
+    <div style="max-width:700px">
+      <div class="filters-bar" style="margin-bottom:16px">
+        <div class="field" style="flex:1">
+          <label>Ticker</label>
+          <input type="text" id="inst-ticker" placeholder="Ej: PBJ26" style="text-transform:uppercase">
+        </div>
+        <div class="field" style="flex:2">
+          <label>Nombre completo</label>
+          <input type="text" id="inst-nombre" placeholder="Ej: Bono Provincia de Buenos Aires 2026">
+        </div>
+        <div class="field" style="flex:2">
+          <label>Emisor</label>
+          <input type="text" id="inst-emisor" placeholder="Ej: Provincia de Buenos Aires">
+        </div>
+        <button class="btn-export" style="align-self:flex-end" onclick="addInstrumento()">+ Agregar</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Nombre completo</th>
+              <th>Emisor</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="inst-tbody"></tbody>
+        </table>
+      </div>
+      <p style="font-size:0.75rem;color:#aaa;margin-top:12px">Los tickers reconocidos se completan automáticamente al cargar desde planilla.</p>
+    </div>
   </div>
 
 
@@ -1036,8 +1091,9 @@ function switchTab(tab) {
   document.getElementById(`panel-${tab}`).classList.add('active');
   if (tab === 'historial') { updateStats(); renderTable(); }
   if (tab === 'tipos') { renderTipos(); }
+  if (tab === 'instrumentos') { renderInstrumentos(); }
   if (tab === 'calendario') { renderCal(); }
-  if (tab === 'resumen') { renderResumen(); }
+  if (tab === 'resumen') { renderResTipoPills(); renderResumen(); }
 }
 
 function formatDate(d) {
@@ -1764,6 +1820,7 @@ function getResumenFiltered() {
     if (desde && e.fecha && e.fecha < desde) return false;
     if (hasta && e.fecha && e.fecha > hasta) return false;
     if (estado && e.estado !== estado) return false;
+    if (resTiposSelected.size > 0 && !resTiposSelected.has(e.tipo)) return false;
     return true;
   });
 }
@@ -1930,6 +1987,112 @@ ${gruposHtml}
 }
 
 
+
+// ════════════════════════════════
+//  INSTRUMENTOS
+// ════════════════════════════════
+function getInstrumentos() {
+  return JSON.parse(localStorage.getItem('cocos_instrumentos') || '{}');
+}
+
+function saveInstrumentos(inst) {
+  localStorage.setItem('cocos_instrumentos', JSON.stringify(inst));
+}
+
+function addInstrumento() {
+  const ticker = document.getElementById('inst-ticker').value.trim().toUpperCase();
+  const nombre = document.getElementById('inst-nombre').value.trim();
+  const emisor = document.getElementById('inst-emisor').value.trim();
+  if (!ticker) { showToast('El ticker es obligatorio', 'err'); return; }
+  const inst = getInstrumentos();
+  inst[ticker] = { nombre, emisor };
+  saveInstrumentos(inst);
+  document.getElementById('inst-ticker').value = '';
+  document.getElementById('inst-nombre').value = '';
+  document.getElementById('inst-emisor').value = '';
+  renderInstrumentos();
+  showToast(`✓ ${ticker} guardado`);
+}
+
+function deleteInstrumento(ticker) {
+  const inst = getInstrumentos();
+  delete inst[ticker];
+  saveInstrumentos(inst);
+  renderInstrumentos();
+}
+
+function renderInstrumentos() {
+  const tbody = document.getElementById('inst-tbody');
+  if (!tbody) return;
+  const inst = getInstrumentos();
+  const keys = Object.keys(inst).sort();
+  if (!keys.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:#ccc;font-size:0.82rem">Todavía no hay instrumentos cargados</td></tr>';
+    return;
+  }
+  tbody.innerHTML = keys.map(k => `
+    <tr>
+      <td><strong style="font-family:monospace">${escHtml(k)}</strong></td>
+      <td>${escHtml(inst[k].nombre || '—')}</td>
+      <td>${escHtml(inst[k].emisor || '—')}</td>
+      <td><button class="btn-del" onclick="deleteInstrumento('${escHtml(k)}')" title="Eliminar">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function lookupInstrumento(ticker) {
+  const inst = getInstrumentos();
+  return inst[ticker.toUpperCase()] || null;
+}
+
+// ════════════════════════════════
+//  CONFIRM ALL
+// ════════════════════════════════
+function confirmAll() {
+  const cards = [...document.getElementById('review-grid').children];
+  if (!cards.length) return;
+  cards.forEach(card => {
+    const cardId = card.id;
+    const fileNameEl = card.querySelector('.rc-filename');
+    const fileName = fileNameEl ? fileNameEl.textContent.replace('📄 ', '').trim() : 'Planilla';
+    confirmCard(cardId, fileName);
+  });
+  showToast(`✓ Todos los eventos guardados`);
+}
+
+// ════════════════════════════════
+//  RESUMEN TIPO PILLS
+// ════════════════════════════════
+let resTiposSelected = new Set();
+
+function renderResTipoPills() {
+  const container = document.getElementById('res-tipo-pills');
+  if (!container) return;
+  const tipos = getTipos();
+  // "Todos" pill
+  const todosActive = resTiposSelected.size === 0;
+  let html = `<button class="tipo-pill${todosActive ? ' active' : ''}" onclick="toggleResTipo('__all__')">Todos</button>`;
+  html += tipos.map(t => {
+    const c = getTipoColor(t);
+    const active = resTiposSelected.has(t);
+    return `<button class="tipo-pill${active ? ' active' : ''}" 
+      style="${active ? `background:${c.bg};color:${c.color};border-color:${c.color}` : ''}"
+      onclick="toggleResTipo('${escHtml(t)}')">${escHtml(t)}</button>`;
+  }).join('');
+  container.innerHTML = html;
+}
+
+function toggleResTipo(tipo) {
+  if (tipo === '__all__') {
+    resTiposSelected.clear();
+  } else {
+    if (resTiposSelected.has(tipo)) resTiposSelected.delete(tipo);
+    else resTiposSelected.add(tipo);
+  }
+  renderResTipoPills();
+  renderResumen();
+}
+
 // ════════════════════════════════
 //  PASTE PARSER
 // ════════════════════════════════
@@ -2079,19 +2242,21 @@ function parsePaste() {
       .map(t => t.trim())
       .filter(Boolean);
 
-    if (!tickers.length) {
-      // No tickers, one card with empty nombre
-      addReviewCard({ nombre: '', tipo, empresa: '', fecha, estado: 'Anunciado', monto: '', moneda: 'ARS', notas: '', confianza: 'alta' }, 'Planilla');
+    const tickerList = tickers.length ? tickers : [''];
+    for (const ticker of tickerList) {
+      const info = ticker ? lookupInstrumento(ticker) : null;
+      addReviewCard({
+        nombre: info?.nombre || ticker,
+        tipo,
+        empresa: info?.emisor || '',
+        fecha,
+        estado: '',
+        monto: '',
+        moneda: '',
+        notas: '',
+        confianza: 'alta'
+      }, 'Planilla');
       generated++;
-    } else if (tickers.length === 1) {
-      addReviewCard({ nombre: tickers[0], tipo, empresa: '', fecha, estado: 'Anunciado', monto: '', moneda: 'ARS', notas: '', confianza: 'alta' }, 'Planilla');
-      generated++;
-    } else {
-      // Multiple tickers → one card per ticker
-      for (const ticker of tickers) {
-        addReviewCard({ nombre: ticker, tipo, empresa: '', fecha, estado: 'Anunciado', monto: '', moneda: 'ARS', notas: '', confianza: 'alta' }, 'Planilla');
-        generated++;
-      }
     }
   }
 
@@ -2181,7 +2346,9 @@ updateStats();
 renderTable();
 renderTipos();
 renderCal();
+renderResTipoPills();
 renderResumen();
+renderInstrumentos();
 </script>
 </body>
 </html>
