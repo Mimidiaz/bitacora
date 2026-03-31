@@ -808,19 +808,7 @@
   <span class="key-help">Obtené tu key gratis en <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></span>
 </div>
 
-<nav>
-  <div class="tab active" onclick="switchTab('historial')">📋 Bitácora</div>
-  <div class="tab" onclick="switchTab('calendario')">📅 Calendario</div>
-  <div class="tab" onclick="switchTab('resumen')">📰 Resumen</div>
-  <div class="tab" onclick="switchTab('cargar')">
-    📄 Cargar documentos
-    <span class="tab-badge" id="badge-pendientes" style="display:none">0</span>
-  </div>
-  <div class="tab" onclick="switchTab('instrumentos')">🏷️ Instrumentos</div>
-  <div class="tab" onclick="switchTab('vencimientos')">⏰ Vencimientos</div>
-  <div class="tab" onclick="switchTab('timeline')">📈 Por activo</div>
-  <div class="tab" onclick="switchTab('tipos')">⚙️ Tipos de evento</div>
-</nav>
+<nav id="tabs-nav" style="overflow-x:auto;flex-wrap:nowrap"></nav>
 
 <main>
 
