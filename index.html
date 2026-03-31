@@ -605,20 +605,81 @@
 </div>
 
 <nav>
-  <div class="tab active" onclick="switchTab('cargar')">
+  <div class="tab active" onclick="switchTab('historial')">📋 Bitácora</div>
+  <div class="tab" onclick="switchTab('cargar')">
     📄 Cargar documentos
     <span class="tab-badge" id="badge-pendientes" style="display:none">0</span>
   </div>
-  <div class="tab" onclick="switchTab('historial')">📋 Historial</div>
+  <div class="tab" onclick="switchTab('tipos')">⚙️ Tipos de evento</div>
 </nav>
 
 <main>
 
   <!-- ═══ TAB CARGAR ═══ -->
-  <div class="panel active" id="panel-cargar">
+  <div class="panel" id="panel-cargar">
     <div class="page-header">
       <div class="page-title">Cargar documentos</div>
-      <div class="page-sub">Subí PDFs o documentos Word. La IA extrae automáticamente los datos de cada evento.</div>
+      <div class="page-sub">Subí PDFs y la IA extrae los datos automáticamente. O cargá un evento manualmente sin archivo.</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:24px">
+      <button class="btn-submit" onclick="document.getElementById('upload-zone').scrollIntoView({behavior:'smooth'})">📄 Subir PDF con IA</button>
+      <button class="btn-submit" style="background:var(--ink2)" onclick="openManualForm()">✏️ Carga manual</button>
+    </div>
+    <div id="manual-form-wrap" style="display:none;margin-bottom:32px">
+      <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm)">
+        <div class="queue-title" style="margin-bottom:16px">Carga manual de evento</div>
+        <div class="rc-grid">
+          <div class="rc-field full">
+            <label>Nombre / Instrumento</label>
+            <input type="text" id="m-nombre" placeholder="Ej: Licitación Tesoro S31M5">
+          </div>
+          <div class="rc-field">
+            <label>Tipo de evento</label>
+            <select id="m-tipo"></select>
+          </div>
+          <div class="rc-field">
+            <label>Empresa / Entidad</label>
+            <input type="text" id="m-empresa" placeholder="Ej: Tesoro Nacional, YPF">
+          </div>
+          <div class="rc-field">
+            <label>Fecha del evento</label>
+            <input type="date" id="m-fecha">
+          </div>
+          <div class="rc-field">
+            <label>Estado</label>
+            <select id="m-estado">
+              <option>Anunciado</option>
+              <option>En curso</option>
+              <option>Liquidado</option>
+              <option>Cancelado</option>
+            </select>
+          </div>
+          <div class="rc-field">
+            <label>Monto</label>
+            <input type="number" id="m-monto" placeholder="Ej: 1000000000">
+          </div>
+          <div class="rc-field">
+            <label>Moneda</label>
+            <select id="m-moneda">
+              <option>ARS</option><option>USD</option><option>USD-Linked</option><option>EUR</option>
+            </select>
+          </div>
+          <div class="rc-field full">
+            <label>Notas</label>
+            <textarea id="m-notas" placeholder="Observaciones, incidencias..."></textarea>
+          </div>
+          <div class="rc-field full">
+            <label>Adjuntar PDF (opcional)</label>
+            <input type="file" id="m-pdf" accept=".pdf" style="padding:6px">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn-confirm" onclick="saveManual()">✓ Guardar evento</button>
+          <button class="btn-discard" onclick="closeManualForm()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:none">
     </div>
 
     <div class="upload-zone" id="upload-zone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
@@ -646,10 +707,10 @@
     </div>
   </div>
 
-  <!-- ═══ TAB HISTORIAL ═══ -->
-  <div class="panel" id="panel-historial">
+  <!-- ═══ TAB BITÁCORA ═══ -->
+  <div class="panel active" id="panel-historial">
     <div class="page-header">
-      <div class="page-title">Historial de eventos</div>
+      <div class="page-title">Bitácora</div>
       <div class="page-sub">Todos los eventos confirmados. Filtrá, buscá y exportá.</div>
     </div>
 
@@ -702,7 +763,8 @@
         <input type="date" id="f-hasta" onchange="renderTable()">
       </div>
       <button class="btn-clear" onclick="clearFilters()">Limpiar</button>
-      <button class="btn-export" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn-export" onclick="exportCSV()">CSV</button>
+      <button class="btn-export" style="background:var(--terra)" onclick="exportPDF()">PDF</button>
     </div>
 
     <div class="table-wrap">
@@ -725,6 +787,31 @@
       </table>
     </div>
   </div>
+
+  <!-- ═══ TAB TIPOS ═══ -->
+  <div class="panel" id="panel-tipos">
+    <div class="page-header">
+      <div class="page-title">Tipos de evento</div>
+      <div class="page-sub">Agregá, editá o eliminá los tipos de evento disponibles en la bitácora.</div>
+    </div>
+    <div style="max-width:500px">
+      <div class="filters-bar" style="margin-bottom:16px; align-items:center">
+        <div class="field" style="flex:1">
+          <label>Nuevo tipo</label>
+          <input type="text" id="nuevo-tipo-input" placeholder="Ej: Canje de deuda" onkeydown="if(event.key==='Enter') addTipo()">
+        </div>
+        <button class="btn-export" style="align-self:flex-end" onclick="addTipo()">+ Agregar</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tipo de evento</th><th></th></tr></thead>
+          <tbody id="tipos-tbody"></tbody>
+        </table>
+      </div>
+      <p style="font-size:0.75rem;color:#aaa;margin-top:12px">Los cambios se aplican inmediatamente en el formulario de carga y los filtros.</p>
+    </div>
+  </div>
+
 
 </main>
 
@@ -760,6 +847,7 @@ function switchTab(tab) {
   document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
   document.getElementById(`panel-${tab}`).classList.add('active');
   if (tab === 'historial') { updateStats(); renderTable(); }
+  if (tab === 'tipos') { renderTipos(); }
 }
 
 function formatDate(d) {
@@ -822,14 +910,19 @@ async function handleFiles(files) {
     qList.appendChild(row);
 
     try {
-      const text = await readFile(file);
+      const fileContent = await readFile(file);
       document.getElementById(`qi-status-${id}`).textContent = 'Extrayendo datos con IA...';
-      const extracted = await extractWithAI(text, file.name);
+      const extracted = await extractWithAI(fileContent, file.name);
       row.className = 'queue-item done';
       document.getElementById(`qi-spin-${id}`).remove();
       document.getElementById(`qi-status-${id}`).className = 'qi-status done';
       document.getElementById(`qi-status-${id}`).textContent = '✓ Datos extraídos — revisá y confirmá abajo';
-      addReviewCard(extracted, file.name);
+      const cardId = addReviewCard(extracted, file.name);
+      // Store PDF for later saving
+      if (fileContent.type === 'pdf') {
+        if (!window._pendingPDFs) window._pendingPDFs = {};
+        window._pendingPDFs[cardId] = fileContent.data;
+      }
     } catch (err) {
       row.className = 'queue-item error';
       document.getElementById(`qi-spin-${id}`).remove();
@@ -939,7 +1032,7 @@ El JSON debe tener exactamente esta estructura:
 function addReviewCard(data, fileName) {
   document.getElementById('review-section').style.display = 'block';
   const grid = document.getElementById('review-grid');
-  const cardId = 'card-' + Date.now();
+  const cardId = 'card-' + Date.now() + Math.floor(Math.random()*1000);
 
   const confColor = data.confianza === 'alta' ? '' : data.confianza === 'media' ? 'medium' : 'low';
   const confLabel = { alta: 'Alta confianza', media: 'Confianza media', baja: 'Baja confianza — revisá con atención' }[data.confianza] || '';
@@ -964,9 +1057,7 @@ function addReviewCard(data, fileName) {
         <div class="rc-field">
           <label>Tipo de evento</label>
           <select id="${cardId}-tipo">
-            ${['Licitación Tesoro','Licitación ON','Colocación Primaria','Evento Corporativo','Otro'].map(o =>
-              `<option ${data.tipo === o ? 'selected' : ''}>${o}</option>`
-            ).join('')}
+            ${getTipoOptions(data.tipo)}
           </select>
         </div>
         <div class="rc-field">
@@ -1009,8 +1100,8 @@ function addReviewCard(data, fileName) {
     </div>
   `;
   grid.appendChild(card);
-
   updatePendingBadge();
+  return cardId;
 }
 
 function escHtml(s) {
@@ -1030,13 +1121,16 @@ function confirmCard(cardId, fileName) {
     moneda: get('moneda'),
     notas: get('notas'),
     fuente: fileName,
-    fechaCarga: new Date().toISOString().split('T')[0]
+    fechaCarga: new Date().toISOString().split('T')[0],
+    pdfData: window._pendingPDFs?.[cardId] || null,
+    pdfName: window._pendingPDFs?.[cardId] ? fileName : null
   };
   history.unshift(event);
   saveHistory();
+  if (window._pendingPDFs) delete window._pendingPDFs[cardId];
   document.getElementById(cardId).remove();
   updatePendingBadge();
-  showToast('✓ Evento guardado en el historial');
+  showToast('✓ Evento guardado en la bitácora');
   if (!document.getElementById('review-grid').children.length) {
     document.getElementById('review-section').style.display = 'none';
   }
@@ -1137,7 +1231,10 @@ function renderTable() {
       <td>${e.monto ? Number(e.monto).toLocaleString('es-AR') : '—'}</td>
       <td>${escHtml(e.moneda || '—')}</td>
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escHtml(e.notas||'')}">${escHtml(e.notas || '—')}</td>
-      <td><button class="btn-del" onclick="deleteEvent(${e.id})" title="Eliminar">✕</button></td>
+      <td style="white-space:nowrap">
+        ${e.pdfData ? `<button class="btn-del" onclick="downloadPDF(${e.id})" title="Descargar PDF" style="color:var(--sky);font-size:1rem">⬇</button>` : ''}
+        <button class="btn-del" onclick="deleteEvent(${e.id})" title="Eliminar">✕</button>
+      </td>
     </tr>
   `).join('');
 }
@@ -1209,11 +1306,243 @@ function updateKeyStatus(key) {
 }
 
 // ════════════════════════════════
+//  TIPOS DE EVENTO
+// ════════════════════════════════
+const DEFAULT_TIPOS = [
+  'Licitación Tesoro', 'Licitación ON', 'Colocación Primaria', 'Evento Corporativo', 'Dividendos', 'Renta', 'Amortización', 'Otro'
+];
+
+function getTipos() {
+  const stored = localStorage.getItem('cocos_tipos');
+  return stored ? JSON.parse(stored) : [...DEFAULT_TIPOS];
+}
+
+function saveTipos(tipos) {
+  localStorage.setItem('cocos_tipos', JSON.stringify(tipos));
+}
+
+function addTipo() {
+  const input = document.getElementById('nuevo-tipo-input');
+  const val = input.value.trim();
+  if (!val) return;
+  const tipos = getTipos();
+  if (tipos.includes(val)) { showToast('Ya existe ese tipo', 'err'); return; }
+  tipos.push(val);
+  saveTipos(tipos);
+  input.value = '';
+  renderTipos();
+  showToast('Tipo agregado');
+}
+
+function deleteTipo(tipo) {
+  const tipos = getTipos().filter(t => t !== tipo);
+  saveTipos(tipos);
+  renderTipos();
+  showToast('Tipo eliminado', 'info');
+}
+
+function renderTipos() {
+  const tipos = getTipos();
+  const tbody = document.getElementById('tipos-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = tipos.map(t => `
+    <tr>
+      <td style="font-weight:500">${escHtml(t)}</td>
+      <td style="text-align:right">
+        ${DEFAULT_TIPOS.includes(t) 
+          ? '<span style="font-size:0.7rem;color:#ccc">predeterminado</span>' 
+          : `<button class="btn-del" onclick="deleteTipo('${escHtml(t)}')" title="Eliminar">✕</button>`}
+      </td>
+    </tr>
+  `).join('');
+  // Update all tipo selects in the app
+  updateTipoSelects();
+}
+
+function updateTipoSelects() {
+  const tipos = getTipos();
+  // Filter select in historial
+  const fTipo = document.getElementById('f-tipo');
+  if (fTipo) {
+    const cur = fTipo.value;
+    fTipo.innerHTML = '<option value="">Todos</option>' + tipos.map(t => 
+      `<option ${t === cur ? 'selected' : ''}>${escHtml(t)}</option>`
+    ).join('');
+  }
+}
+
+function getTipoOptions(selected) {
+  return getTipos().map(t => 
+    `<option ${t === selected ? 'selected' : ''}>${escHtml(t)}</option>`
+  ).join('');
+}
+
+// ════════════════════════════════
+//  PDF EXPORT
+// ════════════════════════════════
+function exportPDF() {
+  const filtered = getFiltered();
+  if (!filtered.length) { showToast('No hay datos para exportar', 'err'); return; }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
+
+  const rows = filtered.map(e => `
+    <tr>
+      <td>${escHtml(e.nombre||'—')}</td>
+      <td>${escHtml(e.tipo||'—')}</td>
+      <td>${escHtml(e.empresa||'—')}</td>
+      <td>${formatDate(e.fecha)||'—'}</td>
+      <td>${escHtml(e.estado||'—')}</td>
+      <td>${e.monto ? Number(e.monto).toLocaleString('es-AR') : '—'}</td>
+      <td>${escHtml(e.moneda||'—')}</td>
+      <td>${escHtml(e.notas||'—')}</td>
+    </tr>
+  `).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Bitácora Cocos Capital</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; color: #1a1a2e; padding: 40px; font-size: 11px; }
+  .header { border-bottom: 3px solid #b5614a; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .title { font-size: 22px; font-weight: bold; color: #1a1a2e; }
+  .subtitle { font-size: 12px; color: #b5614a; margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .meta { font-size: 10px; color: #888; text-align: right; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  thead { background: #1a1a2e; color: white; }
+  thead th { padding: 8px 10px; text-align: left; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; font-family: Arial, sans-serif; }
+  tbody tr:nth-child(even) { background: #faf8f4; }
+  tbody tr { border-bottom: 1px solid #e5ddd5; }
+  tbody td { padding: 7px 10px; vertical-align: top; font-family: Arial, sans-serif; font-size: 10px; }
+  tbody td:first-child { font-weight: bold; color: #1a1a2e; }
+  .footer { margin-top: 24px; font-size: 9px; color: #aaa; text-align: center; border-top: 1px solid #e5ddd5; padding-top: 12px; font-family: Arial, sans-serif; }
+  .stats { display: flex; gap: 24px; margin-bottom: 20px; }
+  .stat { background: #faf8f4; border-left: 3px solid #b5614a; padding: 8px 14px; }
+  .stat-n { font-size: 18px; font-weight: bold; color: #1a1a2e; }
+  .stat-l { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; font-family: Arial, sans-serif; }
+  @media print { body { padding: 20px; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="title">Cocos Capital</div>
+    <div class="subtitle">Bitácora · Mercado de Capitales</div>
+  </div>
+  <div class="meta">
+    Generado: ${dateStr}<br>
+    ${filtered.length} evento${filtered.length !== 1 ? 's' : ''}
+  </div>
+</div>
+<div class="stats">
+  <div class="stat"><div class="stat-n">${filtered.length}</div><div class="stat-l">Total</div></div>
+  <div class="stat"><div class="stat-n">${filtered.filter(e=>e.estado==='Liquidado').length}</div><div class="stat-l">Liquidados</div></div>
+  <div class="stat"><div class="stat-n">${filtered.filter(e=>e.estado==='En curso').length}</div><div class="stat-l">En curso</div></div>
+  <div class="stat"><div class="stat-n">${new Set(filtered.map(e=>e.empresa).filter(Boolean)).size}</div><div class="stat-l">Emisores</div></div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>Instrumento</th><th>Tipo</th><th>Empresa</th><th>Fecha</th>
+      <th>Estado</th><th>Monto</th><th>Moneda</th><th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>${rows}</tbody>
+</table>
+<div class="footer">Cocos Capital · Bitácora de Mercado de Capitales · Documento de uso interno</div>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => win.print(), 500);
+}
+
+// ════════════════════════════════
+//  MANUAL FORM
+// ════════════════════════════════
+function openManualForm() {
+  document.getElementById('manual-form-wrap').style.display = 'block';
+  // Populate tipo select
+  const sel = document.getElementById('m-tipo');
+  sel.innerHTML = getTipoOptions('');
+}
+
+function closeManualForm() {
+  document.getElementById('manual-form-wrap').style.display = 'none';
+  ['m-nombre','m-empresa','m-monto','m-notas'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-fecha').value = '';
+  document.getElementById('m-pdf').value = '';
+}
+
+async function saveManual() {
+  const nombre = document.getElementById('m-nombre').value.trim();
+  if (!nombre) { showToast('El nombre es obligatorio', 'err'); return; }
+
+  const pdfFile = document.getElementById('m-pdf').files[0];
+  let pdfData = null, pdfName = null;
+
+  if (pdfFile) {
+    pdfData = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(pdfFile);
+    });
+    pdfName = pdfFile.name;
+  }
+
+  const event = {
+    id: Date.now(),
+    nombre,
+    tipo: document.getElementById('m-tipo').value,
+    empresa: document.getElementById('m-empresa').value.trim(),
+    fecha: document.getElementById('m-fecha').value,
+    estado: document.getElementById('m-estado').value,
+    monto: document.getElementById('m-monto').value,
+    moneda: document.getElementById('m-moneda').value,
+    notas: document.getElementById('m-notas').value.trim(),
+    fuente: pdfName || 'Carga manual',
+    fechaCarga: new Date().toISOString().split('T')[0],
+    pdfData,
+    pdfName
+  };
+
+  history.unshift(event);
+  saveHistory();
+  closeManualForm();
+  showToast('✓ Evento guardado en la bitácora');
+}
+
+function downloadPDF(id) {
+  const event = history.find(e => e.id === id);
+  if (!event?.pdfData) return;
+  const byteChars = atob(event.pdfData);
+  const byteArr = new Uint8Array(byteChars.length);
+  for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
+  const blob = new Blob([byteArr], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = event.pdfName || `${event.nombre}.pdf`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ════════════════════════════════
 //  INIT
 // ════════════════════════════════
 document.getElementById('hdr-count').textContent = history.length;
 const _savedKey = getApiKey();
 if (_savedKey) updateKeyStatus(_savedKey);
+updateStats();
+renderTable();
+renderTipos();
 </script>
 </body>
 </html>
