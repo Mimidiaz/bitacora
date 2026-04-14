@@ -572,6 +572,21 @@ body.light .ticker-tag{background:rgba(0,98,222,.08);border-color:rgba(0,98,222,
       <div id="cuad-ev-list" style="max-height:220px;overflow-y:auto;border:1px solid var(--bord);border-radius:var(--radius);background:var(--surf2)"></div>
     </div>
 
+    <!-- SUBTÍTULO PORTADA -->
+    <div class="field" style="margin-top:4px">
+      <label>Subtítulo de portada</label>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="document.getElementById('cuad-subtitle').value='Capital Markets'">Capital Markets</button>
+        <button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="document.getElementById('cuad-subtitle').value='CX'">CX</button>
+        <button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="document.getElementById('cuad-subtitle').value='Institucional'">Institucional</button>
+        <button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="document.getElementById('cuad-subtitle').value=''">Sin subtítulo</button>
+      </div>
+      <input type="text" id="cuad-subtitle" value="Capital Markets"
+        placeholder="Ej: Capital Markets, CX, Institucional… (dejar vacío para omitir)"
+        style="width:100%;padding:9px 11px;background:var(--surf2);border:1px solid var(--bord);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor=''">
+    </div>
+
     <div class="mact">
       <button class="btn-sec" onclick="closeModal('modal-cuad')">Cancelar</button>
       <button class="btn-acc" onclick="genCuad()">🖨 Generar PDF</button>
@@ -1190,8 +1205,9 @@ function genCuad(){
   let evs = DB.events.filter(e=>selectedIds.has(e.id)).sort((a,b)=>new Date(a.date)-new Date(b.date));
   if(!evs.length){ toast('Seleccioná al menos un evento','error'); return; }
 
-  const now     = new Date();
-  const dateStr = now.toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'});
+  const now          = new Date();
+  const dateStr      = now.toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'});
+  const cuadSubtitle = (document.getElementById('cuad-subtitle')?.value||'').trim();
   const sm = {yes:'Completo', no:'Pendiente', na:'N/A'};
 
   // ── COVER PAGE ──
@@ -1204,7 +1220,7 @@ function genCuad(){
         </div>
         <div class="cover-divider"></div>
         <div class="cover-title">Bitácora</div>
-        <div class="cover-sub">Capital Markets</div>
+        ${cuadSubtitle ? `<div class="cover-sub">${cuadSubtitle}</div>` : ''}
       </div>
       <div class="cover-meta">
         <div class="cover-date">${dateStr}</div>
